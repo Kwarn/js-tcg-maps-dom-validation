@@ -1,4 +1,4 @@
-// build app, work on form validation using HTML 5
+// build app basic functionality first, work on form validation using HTML 5.
 // https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types
 
 const btnAddMovie = document.getElementById('btn-add-movie');
@@ -13,6 +13,9 @@ const validateMovieTitleInput = () => (movieInputs[0].value ? true : false);
 
 const validateSearchInput = () => (searchInput.value ? true : false);
 
+//validates userInput - *under-construction
+//sets default nested object key and value if not entered
+//adds object to movie MAP 
 const addMovieHandler = () => {
   if (validateMovieTitleInput()) {
     const keyName = movieInputs[1].value || 'defaultKey';
@@ -21,19 +24,37 @@ const addMovieHandler = () => {
   }
 };
 
-const searchMovieHandler = () => {
-  if (validateSearchInput()) {
-    const searchTerms = searchInput.value.toLowerCase().split(' ');
-    const keyToSearchTerms = Array.from(movies.keys()).map((key) =>
-      key.toLowerCase().split(' ')
-    );
-    for (const key of searchTerms) {
+// returns two arrays for comparison, composed from Movies titles and search input
+const getSearchableArrays = () => {
+  const searchTerms = searchInput.value.toLowerCase().split(' ');
+  const movieTitlesAsSplitArrays = Array.from(movies.keys()).map((key) =>
+    key.toLowerCase().split(' ')
+  );
+  return [searchTerms, movieTitlesAsSplitArrays]
+}
 
-      movies.has(key)
-        ? console.log('has key')
-        : console.log("doesn't have key");
+
+
+
+const searchMovieHandler = () => {
+  let matchingMovies = []
+  if (validateSearchInput()) {
+    const [searchTerms, titles] = getSearchableArrays()
+    for (const key of searchTerms) {
+      const title = movies.keys()
+      for (const [idx, innerArr] of titles.entries()) {
+        for (const str of innerArr) {
+          if (str === key){
+            matchingMovies.push(innerArr[idx])
+            // cant access by index, only by key, 
+            // get orginal key back from before .toLowerCase and split. somehow
+            // split and lowercase while in loop to retain access to key-name
+          }
+        }
+      }
     }
   }
+  console.log(matchingMovies)
 };
 
 btnAddMovie.addEventListener('click', addMovieHandler);

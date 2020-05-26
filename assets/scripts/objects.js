@@ -9,13 +9,28 @@ const movieInputs = document
 const searchInput = document.getElementById('filter-title');
 const movies = new Map();
 
+
+// could use map instead of array for faster lookup time using .has() ?
+const searchMoviesByKeys = () => {
+  const searchTerms = searchInput.value.toLowerCase().split(' ');
+  for (const key of movies.keys()) {
+    const titleArr = key.toLowerCase().split(' ');
+    for (const searchTerm of searchTerms) {
+      if (titleArr.includes(searchTerm)) {
+        return [key, movies.get(key)]
+      }
+    }
+  }
+};
+
+const createListElements = () => {
+  // to-do: creates list elements from title and extra information
+}
+
 const validateMovieTitleInput = () => (movieInputs[0].value ? true : false);
 
 const validateSearchInput = () => (searchInput.value ? true : false);
 
-//validates userInput - *under-construction
-//sets default nested object key and value if not entered
-//adds object to movie MAP 
 const addMovieHandler = () => {
   if (validateMovieTitleInput()) {
     const keyName = movieInputs[1].value || 'defaultKey';
@@ -24,38 +39,12 @@ const addMovieHandler = () => {
   }
 };
 
-// returns two arrays for comparison, composed from Movies titles and search input
-const getSearchableArrays = () => {
-  const searchTerms = searchInput.value.toLowerCase().split(' ');
-  const movieTitlesAsSplitArrays = Array.from(movies.keys()).map((key) =>
-    key.toLowerCase().split(' ')
-  );
-  return [searchTerms, movieTitlesAsSplitArrays]
-}
-
-
-
-
 const searchMovieHandler = () => {
-  let matchingMovies = []
   if (validateSearchInput()) {
-    const [searchTerms, titles] = getSearchableArrays()
-    for (const key of searchTerms) {
-      const title = movies.keys()
-      for (const [idx, innerArr] of titles.entries()) {
-        for (const str of innerArr) {
-          if (str === key){
-            matchingMovies.push(innerArr[idx])
-            // cant access by index, only by key, 
-            // get orginal key back from before .toLowerCase and split. somehow
-            // split and lowercase while in loop to retain access to key-name
-          }
-        }
-      }
-    }
+    createListElements(searchMoviesByKeys())
   }
-  console.log(matchingMovies)
 };
 
 btnAddMovie.addEventListener('click', addMovieHandler);
 btnSearch.addEventListener('click', searchMovieHandler);
+

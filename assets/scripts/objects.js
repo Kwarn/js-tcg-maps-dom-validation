@@ -1,8 +1,10 @@
-// build app basic functionality first, work on form validation using HTML 5.
+// build app basic functionality first, work on form validation using HTML 5 or Regex
 // https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types
 
-// to-do: destructuring of extraInfo object, 
-// current behaviour: Array.from(movies.get(key)) -> empty list
+// to-do:
+// Maps only contain unique values, add duplicate handling
+// ie. when user inputs a title that already exists in the map
+// add functionality to remove list elements and replace list with search results
 
 const ul = document.getElementById('movie-list');
 const btnAddMovie = document.getElementById('btn-add-movie');
@@ -17,34 +19,29 @@ const showMovieList = () => {
   ul.classList.add('visible');
 };
 
-// could use map/set instead of array for faster lookup time using .has() ?
-const searchMoviesByKeys = () => {
+const searchMoviesByTitleKeys = () => {
   const searchTerms = searchInput.value.toLowerCase().split(' ');
-  for (const key of movies.keys()) {
-    const titleArr = key.toLowerCase().split(' ');
-    for (const searchTerm of searchTerms) {
-      if (titleArr.includes(searchTerm)) {
-        return [key, Array.from(movies.get(key))]; // problemo
-      }
-    }
+  const localMovies = { ...movies };
+  console.log(localMovies);
+  for (const searchTerm of searchTerms) {
+    Array.from(movies.keys()).filter((key) => {
+      if (key.toLowerCase().split().includes(searchTerm))
+        createAppendListElements(key, Object.entries(movies.get(key)));
+    });
   }
 };
 
-// creates list elements from title and extra information
-const createListElements = ([title, extraInfo]) => {
-  console.log(extraInfo)
-  const [key, value] = extraInfo;
+const createAppendListElements = (title, extraInfo) => {
+  const [extraInfoName, extraInfoValue] = extraInfo[0];
   const li = document.createElement('li');
-  li.id = title;
   li.innerHTML = `
     <div>
       <h2>${title}</h2> 
-      <p>${key}</p> <p> ${value} </p>
+      <p>${extraInfoName}: ${extraInfoValue}</p>
     </div>
   `;
-  ul.appendChild(li)
-  showMovieList()
-  console.log('from here', title, extraInfo);
+  ul.appendChild(li);
+  showMovieList();
 };
 
 const validateMovieTitleInput = () => (movieInputs[0].value ? true : false);
@@ -61,7 +58,7 @@ const addMovieHandler = () => {
 
 const searchMovieHandler = () => {
   if (validateSearchInput()) {
-    createListElements(searchMoviesByKeys());
+    searchMoviesByTitleKeys();
   }
 };
 

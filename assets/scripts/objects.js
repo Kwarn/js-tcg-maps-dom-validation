@@ -23,11 +23,11 @@ const addMovieHandler = () => {
 
 const searchMovieHandler = () => {
   if (validateSearchInput()) {
-    const searchTerms = searchInput.value.split(' ');
+    const searchTerms = searchInput.value.toLowerCase().split(' ');
     const keyToSearchTerms = Array.from(movies.keys()).map((key) =>
       key.toLowerCase().split(' ')
     );
-    for (const key of searchTerms.toLowerCase()) {
+    for (const key of searchTerms) {
 
       movies.has(key)
         ? console.log('has key')

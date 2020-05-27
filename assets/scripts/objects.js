@@ -2,8 +2,7 @@
 // https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types
 
 // to-do:
-// Maps only contain unique values, add duplicate handling
-// ie. when user inputs a title that already exists in the map
+// Maps only contain unique values, add duplicate user input handling
 // add functionality to remove list elements and replace list with search results
 
 const ul = document.getElementById('movie-list');
@@ -19,15 +18,25 @@ const showMovieList = () => {
   ul.classList.add('visible');
 };
 
-const searchMoviesByTitleKeys = () => {
+const removeAllListElements = () => {
+  while (ul.firstChild) {
+    ul.removeChild(ul.firstChild);
+  }
+};
+
+const searchMovieKeys = (searchTerm) => {
+  Array.from(movies.keys()).filter((key) => {
+    if (key.toLowerCase().split().includes(searchTerm)) {
+      removeAllListElements();
+      createAppendListElements(key, Object.entries(movies.get(key)));
+    }
+  });
+};
+
+const startSearch = () => {
   const searchTerms = searchInput.value.toLowerCase().split(' ');
-  const localMovies = { ...movies };
-  console.log(localMovies);
   for (const searchTerm of searchTerms) {
-    Array.from(movies.keys()).filter((key) => {
-      if (key.toLowerCase().split().includes(searchTerm))
-        createAppendListElements(key, Object.entries(movies.get(key)));
-    });
+    searchMovieKeys(searchTerms);
   }
 };
 
@@ -58,7 +67,7 @@ const addMovieHandler = () => {
 
 const searchMovieHandler = () => {
   if (validateSearchInput()) {
-    searchMoviesByTitleKeys();
+    startSearch();
   }
 };
 

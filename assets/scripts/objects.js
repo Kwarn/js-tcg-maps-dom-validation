@@ -1,19 +1,11 @@
-// build app basic functionality first, work on form validation using HTML 5 or Regex
-// https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types
-
 /* 
-to-do:
-find way to clear search results - the loopy behavior of this script
-makes it hard to place clearSearchResults() without making multiple unwanted 
-calls 
-
-toggle movie/search list functionality
+to-do: flesh out validation
 */
-
 
 const movieList = document.getElementById("movie-list");
 const searchList = document.getElementById("search-list");
 const btnAddMovie = document.getElementById("btn-add-movie");
+const btnAllMovies = document.getElementById("btn-all-movies");
 const btnSearch = document.getElementById("btn-search");
 const movieInputs = document
   .getElementById("user-input")
@@ -55,7 +47,7 @@ const createListElements = (listTarget, title, extraInfoArr) => {
   appendListElements(listTarget, li);
 };
 
-// takes a Set of titles
+// takes a Set of titles to avoid duplication
 const prepSearchElements = (titleMatches) => {
   for (const title of titleMatches) {
     createListElements(
@@ -66,8 +58,8 @@ const prepSearchElements = (titleMatches) => {
   }
 };
 
+// uses Regex to search map.keys(movie titles) for exact search term
 const searchMovieTitles = (searchTerms) => {
-  // uses Regex to search map.keys(movie titles) for exact search term
   const titleMatches = [];
   for (const searchTerm of searchTerms)
     titleMatches.push(
@@ -75,11 +67,10 @@ const searchMovieTitles = (searchTerms) => {
         key.match(new RegExp("\\b" + searchTerm + "\\b", "i"))
       )
     );
-  // creates a set from title matches to prevent
-  // a film being found multiple times in the same search
-  titleMatches.flat()[0]
-    ? prepSearchElements(new Set(titleMatches.flat()))
-    : alert("No movies matching those search terms found.");
+  if (titleMatches.flat()[0]) {
+    clearSearchResults();
+    prepSearchElements(new Set(titleMatches.flat()));
+  } else alert("No movies matching those search terms found.");
 };
 
 const saveMovieToMap = (title, key, value) => {
@@ -94,7 +85,6 @@ const saveMovieToMap = (title, key, value) => {
 const validateSearchInput = () => (searchInput.value.trim() ? true : false);
 
 const validateMovieInputs = () => {
-  // add logic to validate keyName and value
   const movieTitle = movieInputs[0].value.trim();
   const key = movieInputs[1].value.trim() || "Extra Info";
   const value = movieInputs[2].value.trim() || "None!";
@@ -103,6 +93,13 @@ const validateMovieInputs = () => {
       ? alert("A movies with that title already exists.")
       : saveMovieToMap(movieTitle, key, value)
     : alert("Invalid movie title entered.");
+};
+
+const showAllMovies = () => {
+  if (!movieList.classList.contains("visible")) {
+    hideList(searchList);
+    showList(movieList);
+  }
 };
 
 const getSearchTerms = () => searchInput.value.split(" ");
@@ -114,5 +111,11 @@ const addMovieHandler = () => validateMovieInputs();
 const searchMovieHandler = () =>
   validateSearchInput() ? startSearch() : alert("Invalid search input");
 
+const showAllMoviesHandler = () =>
+  movies.size
+    ? showAllMovies()
+    : alert("There are no movies in your collection.");
+
 btnAddMovie.addEventListener("click", addMovieHandler);
 btnSearch.addEventListener("click", searchMovieHandler);
+btnAllMovies.addEventListener("click", showAllMoviesHandler);

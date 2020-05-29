@@ -8,7 +8,7 @@
       "type": "chrome",
       "request": "launch",
       "name": "Launch Chrome against localhost",
-      "url": "file:///D:/Programming/Udemy%20-%20JS%20complete%20guide%202020/objects-05-dynamic-access-and-assignment/index.html",
+      "url": "file:///media/karl/2TERRAZ/Programming/Udemy%20-%20JS%20complete%20guide%202020/objects-05-dynamic-access-and-assignment/index.html",
       "webRoot": "${workspaceFolder}"
     }
   ]

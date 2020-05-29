@@ -67,13 +67,15 @@ button:active {
 
 #user-input,
 #movie-list,
-#filter {
+#filter,
+#search-list {
   width: 50rem;
   max-width: 90%;
   margin: 2rem auto;
 }
 
-#movie-list {
+#movie-list,
+#search-list {
   display: none;
   list-style: none;
   padding: 1rem;
@@ -82,10 +84,19 @@ button:active {
 #movie-list.visible {
   display: block;
 }
+#search-list.visible {
+  display: block;
+}
 
 #movie-list li {
   margin: 1rem;
   color: #ff0062;
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+#search-list li {
+  margin: 1rem;
+  color: #001aff;
   font-weight: bold;
   font-size: 1.5rem;
 }

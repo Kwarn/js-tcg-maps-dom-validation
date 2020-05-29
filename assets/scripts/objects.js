@@ -1,10 +1,15 @@
 // build app basic functionality first, work on form validation using HTML 5 or Regex
 // https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types
 
-// to-do:
-// toggle movie/search list functionality
-// bug - same search elements can appear twice,
-// if both search terms are in the same title -consider array.from(new Set())
+/* 
+to-do:
+find way to clear search results - the loopy behavior of this script
+makes it hard to place clearSearchResults() without making multiple unwanted 
+calls 
+
+toggle movie/search list functionality
+*/
+
 
 const movieList = document.getElementById("movie-list");
 const searchList = document.getElementById("search-list");
@@ -18,7 +23,6 @@ const movies = new Map();
 
 const showList = (targetElement) => targetElement.classList.add("visible");
 const hideList = (targetElement) => targetElement.classList.remove("visible");
-const toggleList = () => {};
 
 const clearSearchResults = () => {
   while (searchList.lastChild) {
@@ -26,7 +30,20 @@ const clearSearchResults = () => {
   }
 };
 
-const createAppendListElements = (targetList, title, extraInfoArr) => {
+const appendListElements = (listTarget, li) => {
+  if (listTarget === movieList) {
+    movieList.appendChild(li);
+    hideList(searchList);
+    showList(movieList);
+  }
+  if (listTarget === searchList) {
+    searchList.appendChild(li);
+    hideList(movieList);
+    showList(searchList);
+  }
+};
+
+const createListElements = (listTarget, title, extraInfoArr) => {
   const [extraInfoKey, extraInfoValue] = extraInfoArr;
   const li = document.createElement("li");
   li.innerHTML = `
@@ -35,14 +52,13 @@ const createAppendListElements = (targetList, title, extraInfoArr) => {
   <p>${extraInfoKey}: ${extraInfoValue}</p>
   </div>
   `;
-  targetList === movieList
-    ? movieList.appendChild(li)
-    : searchList.appendChild(li);
+  appendListElements(listTarget, li);
 };
 
+// takes a Set of titles
 const prepSearchElements = (titleMatches) => {
   for (const title of titleMatches) {
-    createAppendListElements(
+    createListElements(
       searchList,
       title,
       Object.entries(movies.get(title)).flat()
@@ -50,8 +66,8 @@ const prepSearchElements = (titleMatches) => {
   }
 };
 
-// uses Regex to search map.keys() (movie titles) for exact search term
 const searchMovieTitles = (searchTerms) => {
+  // uses Regex to search map.keys(movie titles) for exact search term
   const titleMatches = [];
   for (const searchTerm of searchTerms)
     titleMatches.push(
@@ -59,12 +75,16 @@ const searchMovieTitles = (searchTerms) => {
         key.match(new RegExp("\\b" + searchTerm + "\\b", "i"))
       )
     );
-  prepSearchElements(titleMatches.flat());
+  // creates a set from title matches to prevent
+  // a film being found multiple times in the same search
+  titleMatches.flat()[0]
+    ? prepSearchElements(new Set(titleMatches.flat()))
+    : alert("No movies matching those search terms found.");
 };
 
 const saveMovieToMap = (title, key, value) => {
   movies.set(title, { [key]: value });
-  createAppendListElements(
+  createListElements(
     movieList,
     title,
     Object.entries(movies.get(title)).flat()
